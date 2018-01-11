@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 
-import auth from './reducers/auth'
+import chat from './reducers/chat'
 
 export default function createReducer(asyncReducers) {
     return combineReducers({
-        auth,
+        chat,
         ...asyncReducers
     });
 }
