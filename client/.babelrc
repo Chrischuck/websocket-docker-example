@@ -1,0 +1,14 @@
+{
+  "presets": [
+    "stage-0",
+    "env",
+    "react"
+  ],
+  "plugins": [
+    "closure-elimination",
+    "transform-react-constant-elements",
+    "transform-react-remove-prop-types",
+    "transform-class-properties",
+    "transform-react-inline-elements"
+  ]
+}

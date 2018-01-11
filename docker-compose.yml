@@ -1,0 +1,45 @@
+version: '3.3'
+
+volumes:
+  postgres-data:
+
+services:
+  chat-practice-client-1:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: chat-practice/client
+    command: node server.js
+    ports:
+      - '5007:8080'
+  chat-practice-client-2:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: chat-practice/client
+    command: node server.js
+    ports:
+      - '5008:8080'
+  chat-practice-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: chat-practice/api
+    command: bash -c "forever --watch src/index.js"
+    environment:
+      - POSTGRES_CONNECTION_URI=postgres://postgres:password@postgres:5432/chat
+    ports:
+      - '5006:8080'
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: chat
+    ports:
+      - '5005:5432'
+    expose:
+      - '5432'
+    
