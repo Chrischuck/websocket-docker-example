@@ -1,6 +1,6 @@
 export function openConnection(payload) {
   return function(dispatch) {
-    const ws = new WebSocket(`ws://localhost:3000/?id=${payload.id}`)
+    const ws = new WebSocket(`ws://localhost:5006/?id=${payload.id}`)
     
     ws.onmessage = (e) => {
       const payload = JSON.parse(e.data)

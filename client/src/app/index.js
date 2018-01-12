@@ -17,13 +17,12 @@ class Home extends React.Component {
     super(props)
 
     this.state = {
-      id: 1,
       message: ''
     }
   }
 
   componentWillMount() {
-    this.props.openConnection({ id: this.state.id })
+    this.props.openConnection({ id: this.props.chat.id })
   }
 
   componentWillUnmount() {
@@ -50,7 +49,7 @@ class Home extends React.Component {
           <div className='text-area'>
             {
               this.props.chat.messages.map(m => 
-                <Message message={m} id={this.state.id} />
+                <Message message={m} id={this.props.chat.id} />
               )
             }
           </div>

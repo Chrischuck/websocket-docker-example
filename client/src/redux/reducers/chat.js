@@ -1,4 +1,5 @@
 const initialState = {
+  id: Math.random() * 1000,
   ws: null,
   messages: []
 };
