@@ -4,11 +4,10 @@ export function openConnection(payload) {
     
     ws.onmessage = (e) => {
       const payload = JSON.parse(e.data)
-
       dispatch({
         type: 'RELOAD_MESSAGES',
         payload: {
-          messages: payload.messages
+          messages: payload.data.map(i => JSON.parse(i))
         }
       })
     };

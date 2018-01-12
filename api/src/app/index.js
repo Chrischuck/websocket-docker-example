@@ -14,7 +14,9 @@ app.use(cors())
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+const messages = []
 const connections = {}
+
 wss.on('connection', function connection(ws, req) {
   const id = url.parse(req.url, true).query.id
   
@@ -24,10 +26,11 @@ wss.on('connection', function connection(ws, req) {
   }
 
   ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
+    messages.push(message)
+    ws.send(JSON.stringify({ data: messages.sort((a, b) => a.date < b.date)}))
   });
 
-  ws.send('something');
+  ws.send('connected')
 });
 
 

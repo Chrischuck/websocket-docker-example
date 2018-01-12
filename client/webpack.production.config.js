@@ -2,7 +2,6 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const OfflinePlugin = require('offline-plugin');
 
 module.exports = {
   context: __dirname + '/src',
@@ -93,16 +92,5 @@ module.exports = {
     }),
     new webpack.optimize.AggressiveMergingPlugin(),
     new ExtractTextPlugin("styles.css"),
-    new OfflinePlugin({
-      caches: {
-        main: ['*.bundle.js', 'index.html', 'styles.css', '*.svg', '*.eot', '*.ttf'],
-        additional: [],
-        optional: []
-      },
-      ServiceWorker: {
-        output: 'service-worker.js',
-        minify: true
-      }
-    })
   ]
 }

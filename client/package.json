@@ -44,7 +44,6 @@
     "image-webpack-loader": "^3.4.2",
     "node-sass": "^4.7.1",
     "nodemon": "^1.12.1",
-    "offline-plugin": "^4.8.4",
     "react-test-renderer": "^16.1.1",
     "sass-loader": "^6.0.6",
     "svg-loader": "0.0.2",

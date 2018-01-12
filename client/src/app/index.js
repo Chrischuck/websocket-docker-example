@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import Message from './components/message'
+
 import './styles.css'
 
 import * as actions from '../redux/actions'
@@ -15,12 +17,17 @@ class Home extends React.Component {
     super(props)
 
     this.state = {
+      id: 1,
       message: ''
     }
   }
 
   componentWillMount() {
-    this.props.openConnection({ id: 1 })
+    this.props.openConnection({ id: this.state.id })
+  }
+
+  componentWillUnmount() {
+    this.props.chat.ws.close()
   }
 
   onChange = (event) => {
@@ -31,6 +38,7 @@ class Home extends React.Component {
     this.props.chat.ws.send(JSON.stringify({
       sender: 1,
       message: this.state.message,
+      date: Date.now()
     }))
     this.setState({ message: ''})
   }
@@ -40,18 +48,11 @@ class Home extends React.Component {
       <div className='parent'>
         <div className='chat-box'>
           <div className='text-area'>
-
-
-            <div className='text-message my-text'>
-              <p className='text'>hello</p>
-            </div>
-            <div className='text-message other-text'>
-                <p className='text'>sup</p>
-            </div>
-            <div className='text-message my-text'>
-              <p className='text'>hello</p>
-            </div>
-
+            {
+              this.props.chat.messages.map(m => 
+                <Message message={m} id={this.state.id} />
+              )
+            }
           </div>
   
           <div className='input-container'>
