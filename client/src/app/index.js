@@ -27,6 +27,14 @@ class Home extends React.Component {
     this.setState({ [event.target.name]: event.target.value })
   }
 
+  send = () => {
+    this.props.chat.ws.send(JSON.stringify({
+      sender: 1,
+      message: this.state.message,
+    }))
+    this.setState({ message: ''})
+  }
+
   render() {
     return (
       <div className='parent'>
@@ -47,8 +55,14 @@ class Home extends React.Component {
           </div>
   
           <div className='input-container'>
-            <input className='input' name='message' onChange={this.onChange} placeholder='Say Hi!'/>
-            <a className='button'>Send!</a>
+            <input
+              className='input'
+              value={this.state.message}
+              name='message'
+              onChange={this.onChange}
+              placeholder='Say Hi!'
+            />
+            <a className='button' onClick={this.send}>Send!</a>
           </div>
         </div>
       </div>
