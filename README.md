@@ -1,4 +1,4 @@
-# Real Time Chat 🚀
+# Real Time Chat 🍪
 
 A real time chat built with React, Express, and Docker/Docker Compose.
 
