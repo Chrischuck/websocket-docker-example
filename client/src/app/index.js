@@ -52,8 +52,8 @@ class Home extends React.Component {
     const { id } = this.props.chat
     return (
       <div className='parent'>
-        <h2>You are user {id}</h2>
-        <h2>You are now chatting with user {id % 2 === 0 ? id + 1 : id - 1}</h2>
+        <h2 style={{marginBottom: '0px'}}>You are user {id}</h2>
+        <h2 style={{marginTop: '5px'}}>You are now chatting with user {id % 2 === 0 ? id + 1 : id - 1}</h2>
         <div className='chat-box'>
           <div className='text-area'>
             {
