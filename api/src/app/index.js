@@ -38,17 +38,14 @@ wss.on('connection', function connection(ws, req) {
       if (connections[parsedMessage.sender + 1]) {
         connections[parsedMessage.sender + 1].ws.send(JSON.stringify({ data: usersMessages }))
       }
-    } else {
-      const usersMessages = messages
-        .filter(m => (m.sender === parsedMessage.sender || m.sender === parsedMessage.sender - 1))
-        .sort((a, b) => a.date < b.date)       
+    } else {      
       connections[parsedMessage.sender - 1].ws.send(JSON.stringify({ data: usersMessages }))
     } 
   });
 
   // can assume if even ID it's a new channel
   if (id % 2 === 1) {
-    const usersMessages = messages.filter(m => m.sender === id || m.sender === id - 1)
+    const usersMessages = messages.filter(m => m.sender === id || m.sender === id - 1).sort((a, b) => a.date >= b.date)  
     connections[id].ws.send(JSON.stringify({ data: usersMessages }))
   }
 

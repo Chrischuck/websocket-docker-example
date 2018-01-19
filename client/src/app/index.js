@@ -34,12 +34,14 @@ class Home extends React.Component {
   }
 
   send = () => {
-    this.props.chat.ws.send(JSON.stringify({
-      sender: this.props.chat.id,
-      message: this.state.message,
-      date: Date.now()
-    }))
-    this.setState({ message: ''})
+    if (this.state.message) {
+      this.props.chat.ws.send(JSON.stringify({
+        sender: this.props.chat.id,
+        message: this.state.message,
+        date: Date.now()
+      }))
+      this.setState({ message: ''})
+    }
   }
 
   handleKeyPress = (event) => {
