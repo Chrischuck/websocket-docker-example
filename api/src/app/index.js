@@ -15,24 +15,48 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const messages = []
-const connections = {}
+const connections = {} // pair off connections by 2's {0,1}, {2,3}
 
 wss.on('connection', function connection(ws, req) {
   const id = url.parse(req.url, true).query.id
   
-  connection[id] = {
+  connections[id] = {
     sender: id,
     ws
   }
 
   ws.on('message', function incoming(message) {
-    messages.push(message)
-    ws.send(JSON.stringify({ data: messages.sort((a, b) => a.date < b.date)}))
+    const parsedMessage = JSON.parse(message)
+    messages.push(parsedMessage)
+    
+    const usersMessages = messages
+      .filter(m => (m.sender === parsedMessage.sender || m.sender === (parsedMessage.sender % 2 === 0 ? parsedMessage.sender + 1 : parsedMessage.sender - 1)))
+      .sort((a, b) => a.date >= b.date)
+
+    connections[parsedMessage.sender].ws.send(JSON.stringify({ data: usersMessages }))    
+    if (parsedMessage.sender % 2 === 0) {
+      if (connections[parsedMessage.sender + 1]) {
+        connections[parsedMessage.sender + 1].ws.send(JSON.stringify({ data: usersMessages }))
+      }
+    } else {
+      const usersMessages = messages
+        .filter(m => (m.sender === parsedMessage.sender || m.sender === parsedMessage.sender - 1))
+        .sort((a, b) => a.date < b.date)       
+      connections[parsedMessage.sender - 1].ws.send(JSON.stringify({ data: usersMessages }))
+    } 
   });
 
-  ws.send('connected')
+  // can assume if even ID it's a new channel
+  if (id % 2 === 1) {
+    const usersMessages = messages.filter(m => m.sender === id || m.sender === id - 1)
+    connections[id].ws.send(JSON.stringify({ data: usersMessages }))
+  }
+
 });
 
+
+let id = 0;
+app.get('/id', (req, res) => res.status(200).send({ id: id++ }))
 
 app.get('/', (req, res) => res.status(200).send('200 OK'))
 

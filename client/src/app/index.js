@@ -35,16 +35,25 @@ class Home extends React.Component {
 
   send = () => {
     this.props.chat.ws.send(JSON.stringify({
-      sender: 1,
+      sender: this.props.chat.id,
       message: this.state.message,
       date: Date.now()
     }))
     this.setState({ message: ''})
   }
 
+  handleKeyPress = (event) => {
+    if (event.key == 'Enter') {
+      this.send()
+    }
+  }
+
   render() {
+    const { id } = this.props.chat
     return (
       <div className='parent'>
+        <h2>You are user {id}</h2>
+        <h2>You are now chatting with user {id % 2 === 0 ? id + 1 : id - 1}</h2>
         <div className='chat-box'>
           <div className='text-area'>
             {
@@ -61,6 +70,7 @@ class Home extends React.Component {
               name='message'
               onChange={this.onChange}
               placeholder='Say Hi!'
+              onKeyPress={this.handleKeyPress}
             />
             <a className='button' onClick={this.send}>Send!</a>
           </div>

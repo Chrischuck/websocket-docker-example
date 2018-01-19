@@ -1,5 +1,5 @@
 const initialState = {
-  id: Math.random() * 1000,
+  id: null,
   ws: null,
   messages: []
 };
@@ -12,6 +12,8 @@ export default function reducer(state = initialState, action) {
       return { ...state, ws: payload.ws };
     case 'RELOAD_MESSAGES':
       return { ...state, messages: payload.messages }
+    case 'FETCH_ID_SUCCESS':
+      return { ...state, id: payload.id }
     default:
       return state;
   }
