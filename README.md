@@ -4,7 +4,8 @@ A real time chat built with React, Express, and Docker/Docker Compose.
 
 This uses Docker to build/run the client and api on two seperate images. Clients are paired in chat together sequentially; i.e. client 0 and client 1, client 2 and client 3, and so forth. 
 
-<img src='https://github.com/Chrischuck/websocket-docker-example/blob/master/images/2.png' height='350' width='250'>
+<img src='https://github.com/Chrischuck/websocket-docker-example/blob/master/images/1.png' height='400' width='300'>
+<img src='https://github.com/Chrischuck/websocket-docker-example/blob/master/images/2.png' height='400' width='300'>
 
 ## Goals of this repo
 - [x] Learn Docker
