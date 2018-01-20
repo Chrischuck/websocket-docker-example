@@ -10,7 +10,8 @@
 
 .chat-box {
   display: block;
-  width: 50%;
+  width: 90%;
+  max-width: 600px;  
   height: 70%;
   background-color: #fff;
   border-radius: .25rem;

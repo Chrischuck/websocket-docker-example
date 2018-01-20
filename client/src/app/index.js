@@ -10,7 +10,7 @@ import * as actions from '../redux/actions'
 
 const mapStateToProps = (state) => ({ chat: state.chat })
 const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
-
+//add auto scroll to bottom
 @connect(mapStateToProps, mapDispatchToProps)
 class Home extends React.Component {
   constructor(props) {
@@ -23,6 +23,11 @@ class Home extends React.Component {
 
   componentWillMount() {
     this.props.openConnection({ id: this.props.chat.id })
+    this.scrollToBottom();
+  }
+
+  componentDidUpdate() {
+    this.scrollToBottom();
   }
 
   componentWillUnmount() {
@@ -31,6 +36,12 @@ class Home extends React.Component {
 
   onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
+  }
+
+  scrollToBottom = () => {
+    if (this.textArea) {
+      this.textArea.scrollTop = this.textArea.scrollHeight;
+    }
   }
 
   send = () => {
@@ -57,7 +68,7 @@ class Home extends React.Component {
         <h2 style={{marginBottom: '0px'}}>You are user {id}</h2>
         <h2 style={{marginTop: '5px'}}>You are now chatting with user {id % 2 === 0 ? id + 1 : id - 1}</h2>
         <div className='chat-box'>
-          <div className='text-area'>
+          <div className='text-area' ref={element => { this.textArea = element }}>
             {
               this.props.chat.messages.map(m => 
                 <Message message={m} id={this.props.chat.id} />
