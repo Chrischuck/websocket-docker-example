@@ -1,6 +1,6 @@
 # Real Time Chat 🍪
 
-A real time chat built with React, Express, and Docker/Docker Compose.
+A real time chat built with React, Express, Docker/Docker Compose, and love.
 
 This uses Docker to build/run the client and api on two seperate images. Clients are paired in chat together sequentially; i.e. client 0 and client 1, client 2 and client 3, and so forth. 
 
