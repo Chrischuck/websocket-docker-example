@@ -5,25 +5,27 @@ import WebSocket from 'ws'
 import url from 'url'
 import http from 'http'
 
-import client from '../models'
+import { Client } from 'pg'
+const connectionString = 'postgres://postgres:password@postgres:5432/chat'
+
+import initClient from '../models'
 
 const PORT = 3000
 const app = express()
 
-console.log(client)
 app.use(bodyParser.json())
 app.use(cors())
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-const messages = []
 const connections = {} // pair off connections by 2's {0,1}, {2,3}
 
-wss.on('connection', function connection(ws, req) {
+wss.on('connection', async function connection(ws, req) {
   const id = url.parse(req.url, true).query.id
 
-  const text = 'INSERT INTO messages(message, sender, createdAt) VALUES($1 , $2, $3)'
+  const newMessage = 'INSERT INTO messages(message, sender, createdAt) VALUES($1 , $2, $3)'
+  const getMessages = 'SELECT * FROM messages WHERE sender = $1 OR sender = $2'
 
   connections[id] = {
     sender: id,
@@ -32,46 +34,73 @@ wss.on('connection', function connection(ws, req) {
 
   ws.on('message', async function incoming(message) {
     const parsedMessage = JSON.parse(message)
-    messages.push(parsedMessage)
 
-    console.log(parsedMessage)
-    const query = {
-      text,
-      values: [parsedMessage.message, parsedMessage.sender, parsedMessage.date ]
-    }
-    const dbMessage = await client.query(query, (err, res) => {
-      console.log('\n')
-      console.log(err)
-      if (err) {
-        throw err
-      }
-      console.log('\n')
-      console.log('Message Saved in Table.')
-      console.log(res)
-      client.end()
+    // open up a new client to the DB
+    const client = new Client({
+      connectionString: connectionString,
     })
-    console.log(dbMessage)
+    await client.connect()
 
-    const usersMessages = messages
-      .filter(m => (m.sender === parsedMessage.sender || m.sender === (parsedMessage.sender % 2 === 0 ? parsedMessage.sender + 1 : parsedMessage.sender - 1)))
-      .sort((a, b) => a.date >= b.date)
+    // Build the query to make a new message
+    const newMessageQuery = {
+      text: newMessage,
+      values: [parsedMessage.message, parsedMessage.sender, parsedMessage.createdAt]
+    }
 
-    connections[parsedMessage.sender].ws.send(JSON.stringify({ data: usersMessages }))    
+    // call query
+    const dbMessage = await client.query(newMessageQuery)
+      .then(res => res)
+      .catch(err => { throw err })
+    
+    // calculate the receiver of the message
+    const receiver = parsedMessage.sender % 2 === 0 ? parsedMessage.sender + 1 : parsedMessage.sender - 1
+
+    // build query to get the new messages
+    const getMessagesQuery = {
+      text: getMessages,
+      values: [parsedMessage.sender, receiver]
+    }
+
+    // call query and sort messages by date
+    const dbMessages = await client.query(getMessagesQuery)
+      .then(res => res.rows.sort((a, b) => parseInt(a.createdAt, 10) >= parseInt(b.created, 10)))
+      .catch(err => { throw err })
+
+    // send new messages to sender
+    connections[parsedMessage.sender].ws.send(JSON.stringify({ data: dbMessages }))
+
+    // find the "Other" perosn in the chat and send messages
     if (parsedMessage.sender % 2 === 0) {
       if (connections[parsedMessage.sender + 1]) {
-        connections[parsedMessage.sender + 1].ws.send(JSON.stringify({ data: usersMessages }))
+        connections[parsedMessage.sender + 1].ws.send(JSON.stringify({ data: dbMessages }))
       }
     } else {      
-      connections[parsedMessage.sender - 1].ws.send(JSON.stringify({ data: usersMessages }))
+      connections[parsedMessage.sender - 1].ws.send(JSON.stringify({ data: dbMessages }))
     } 
+    // end client connection
+    client.end()
   });
 
-  // can assume if even ID it's a new channel
+  // can assume if ID is an even number then it's a new channel
   if (id % 2 === 1) {
-    const usersMessages = messages.filter(m => m.sender === id || m.sender === id - 1).sort((a, b) => a.date >= b.date)  
-    connections[id].ws.send(JSON.stringify({ data: usersMessages }))
-  }
+    // since it's odd, we need to see if there's any previous messages
+    const client = new Client({
+      connectionString: connectionString,
+    })
+    await client.connect()
 
+    const getMessagesQuery = {
+      text: getMessages,
+      values: [id, id - 1]
+    }
+
+    const dbMessages = await client.query(getMessagesQuery)
+      .then(res => res.rows.sort((a, b) => parseInt(a.createdAt, 10) >= parseInt(b.created, 10)))
+      .catch(err => { throw err })
+
+    connections[id].ws.send(JSON.stringify({ data: dbMessages }))
+    client.end()
+  }
 });
 
 

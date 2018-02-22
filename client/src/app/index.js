@@ -49,7 +49,7 @@ class Home extends React.Component {
       this.props.chat.ws.send(JSON.stringify({
         sender: this.props.chat.id,
         message: this.state.message,
-        date: Date.now()
+        createdAt: Date.now()
       }))
       this.setState({ message: ''})
     }
