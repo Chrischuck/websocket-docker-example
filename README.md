@@ -13,7 +13,7 @@ This uses Docker to build/run the client and api on two seperate images. Clients
 ## Goals of this repo
 - [x] Learn Docker
 - [x] Practice using websockets with a real time chat
-- [ ] Implement postgresql
+- [x] Implement postgresql
 
 ## Installation/Running
 Clone the repo:  
