@@ -4,19 +4,19 @@ volumes:
   postgres-data:
 
 services:
-  chat-practice-client:
+  chat-client:
     build:
       context: ./client
       dockerfile: Dockerfile
-    image: chat-practice/client
+    image: chat/client
     command: node server.js
     ports:
       - '5008:8080'
-  chat-practice-api:
+  chat-api:
     build:
       context: ./api
       dockerfile: Dockerfile
-    image: chat-practice/api
+    image: chat/api
     command: bash -c "forever --watch src/index.js"
     environment:
       - POSTGRES_CONNECTION_URI=postgres://postgres:password@postgres:5432/chat

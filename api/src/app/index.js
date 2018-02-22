@@ -22,16 +22,18 @@ const connections = {} // pair off connections by 2's {0,1}, {2,3}
 
 wss.on('connection', function connection(ws, req) {
   const id = url.parse(req.url, true).query.id
-  
+  const newMessage = 'INSERT INTO messages(message, sender, receiver) VALUES($1 , $2)'
   connections[id] = {
     sender: id,
     ws
   }
 
-  ws.on('message', function incoming(message) {
+  ws.on('message', async function incoming(message) {
     const parsedMessage = JSON.parse(message)
     messages.push(parsedMessage)
-    
+    console.log(parsedMessage)
+    //const dbMessage = await client.query(newMessage, [])
+
     const usersMessages = messages
       .filter(m => (m.sender === parsedMessage.sender || m.sender === (parsedMessage.sender % 2 === 0 ? parsedMessage.sender + 1 : parsedMessage.sender - 1)))
       .sort((a, b) => a.date >= b.date)

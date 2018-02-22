@@ -6,7 +6,7 @@ WORKDIR /code
 ADD package.json .
 
 RUN npm install forever -g
-RUN npm install
+#RUN npm install
 
 COPY . .
 
