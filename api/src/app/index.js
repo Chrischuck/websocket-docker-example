@@ -5,9 +5,12 @@ import WebSocket from 'ws'
 import url from 'url'
 import http from 'http'
 
+import client from '../models'
+
 const PORT = 3000
 const app = express()
 
+console.log(client)
 app.use(bodyParser.json())
 app.use(cors())
 

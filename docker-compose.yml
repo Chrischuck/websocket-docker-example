@@ -1,7 +1,7 @@
 version: '3.3'
 
-#volumes:
-#  postgres-data:
+volumes:
+  postgres-data:
 
 services:
   chat-practice-client:
@@ -22,17 +22,16 @@ services:
       - POSTGRES_CONNECTION_URI=postgres://postgres:password@postgres:5432/chat
     ports:
       - '5006:3000'
-# add postgres for saving messages in time
-#  postgres:
-#    image: postgres
-#    restart: always
-#    volumes:
-#      - postgres-data:/var/lib/postgresql/data
-#    environment:
-#      POSTGRES_PASSWORD: password
-#      POSTGRES_DB: chat
-#    ports:
-#      - '5005:5432'
-#    expose:
-#      - '5432'
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: chat
+    ports:
+      - '5005:5432'
+    expose:
+      - '5432'
     
