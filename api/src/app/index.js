@@ -22,7 +22,9 @@ const connections = {} // pair off connections by 2's {0,1}, {2,3}
 
 wss.on('connection', function connection(ws, req) {
   const id = url.parse(req.url, true).query.id
-  const newMessage = 'INSERT INTO messages(message, sender, receiver) VALUES($1 , $2)'
+
+  const text = 'INSERT INTO messages(message, sender, createdAt) VALUES($1 , $2, $3)'
+
   connections[id] = {
     sender: id,
     ws
@@ -31,8 +33,24 @@ wss.on('connection', function connection(ws, req) {
   ws.on('message', async function incoming(message) {
     const parsedMessage = JSON.parse(message)
     messages.push(parsedMessage)
+
     console.log(parsedMessage)
-    //const dbMessage = await client.query(newMessage, [])
+    const query = {
+      text,
+      values: [parsedMessage.message, parsedMessage.sender, parsedMessage.date ]
+    }
+    const dbMessage = await client.query(query, (err, res) => {
+      console.log('\n')
+      console.log(err)
+      if (err) {
+        throw err
+      }
+      console.log('\n')
+      console.log('Message Saved in Table.')
+      console.log(res)
+      client.end()
+    })
+    console.log(dbMessage)
 
     const usersMessages = messages
       .filter(m => (m.sender === parsedMessage.sender || m.sender === (parsedMessage.sender % 2 === 0 ? parsedMessage.sender + 1 : parsedMessage.sender - 1)))
