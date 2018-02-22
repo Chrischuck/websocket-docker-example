@@ -11,7 +11,7 @@ const table = `
   CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
   CREATE TABLE messages(
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid,
     sender INTEGER,
     receiver INTEGER,
     createdAt TIMESTAMP
