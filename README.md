@@ -6,8 +6,8 @@ This uses Docker to build/run the client and api on two seperate images. Clients
 
 ## UI
 <p align="center">
-  <img  src='https://github.com/Chrischuck/websocket-docker-example/blob/master/images/1.png' height='480' width='300'>
-  <img src='https://github.com/Chrischuck/websocket-docker-example/blob/master/images/2.png' height='480' width='300'>
+  <img  src='images/1.png' height='480' width='300'>
+  <img src='images/2.png' height='480' width='300'>
 </p>
 
 ## Goals of this repo

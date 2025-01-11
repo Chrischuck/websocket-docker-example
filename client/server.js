@@ -8,8 +8,8 @@ var PORT = 8080
 app.use(express.static(path.join(__dirname, 'dist')));
 
 app.get('*', function(req, res) {
-    res.sendfile('./dist/index.html');
-});
+  res.sendFile(__dirname + '/dist/index.html');
+  });
 
 
 app.listen(PORT, function(error) {
